@@ -76,11 +76,10 @@
 				<Item Name="Write Delimited Spreadsheet.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/file.llb/Write Delimited Spreadsheet.vi"/>
 				<Item Name="Write Spreadsheet String.vi" Type="VI" URL="/&lt;vilib&gt;/Utility/file.llb/Write Spreadsheet String.vi"/>
 			</Item>
-			<Item Name="[ENO3](SubVI).vi" Type="VI" URL="../VIs/[ENO3](SubVI).vi"/>
+			<Item Name="[NO3](SubVI).vi" Type="VI" URL="../VIs/[NO3](SubVI).vi"/>
 			<Item Name="A3(SubVI).vi" Type="VI" URL="../VIs/A3(SubVI).vi"/>
-			<Item Name="Acorrection(SubVI).vi" Type="VI" URL="../VIs/Acorrection(SubVI).vi"/>
 			<Item Name="ASW(SubVI).vi" Type="VI" URL="../VIs/ASW(SubVI).vi"/>
-			<Item Name="DataAcqisitionFormFile(SubVI).vi" Type="VI" URL="../VIs/DataAcqisitionFormFile(SubVI).vi"/>
+			<Item Name="CRR(SubVI).vi" Type="VI" URL="../VIs/CRR(SubVI).vi"/>
 			<Item Name="ESW (SubVI).vi" Type="VI" URL="../VIs/ESW (SubVI).vi"/>
 			<Item Name="Lambda (SubVI).vi" Type="VI" URL="../VIs/Lambda (SubVI).vi"/>
 			<Item Name="lvanlys.dll" Type="Document" URL="/&lt;resource&gt;/lvanlys.dll"/>

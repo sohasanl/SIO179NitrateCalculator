@@ -1,0 +1,1 @@
+pyuic5 -x GUI.ui -o GUI.py

@@ -34,11 +34,11 @@ class C10082MD:
 
         dllName = "specu1a.dll"
         spec1adllpath = os.path.join(os.path.dirname(__file__), os.path.join('..', 'Dependencies', dllName)) 
-        print(spec1adllpath)
         self.specdll = ctypes.WinDLL(spec1adllpath)
-        self.calibCoefficients = None
-        self.sensorData = None
+        self.calibCoefficients = [0] * 6
+        self.sensorData = [0] * usPixelSize
         self.usPixelSize = usPixelSize
+        self.fig, self.ax = plt.subplots()
         self.unitID = ctypes.c_int(nProductId)
         self.deviceHandle = self.specdll.USB_OpenDevice(self.unitID)
         if self.deviceHandle == self.INVALID_HANDLE_VALUE:
@@ -49,30 +49,13 @@ class C10082MD:
             print("Specified USB device handle is invalid.")
         elif  self.deviceStatus == self.USBDEV_CHECK_REMOVE:
             print("USB device was removed.")
-
         self.pipeHandle = self.specdll.USB_OpenPipe(self.deviceHandle)
-################################################
-        self.fig, self.ax = plt.subplots()
-        xLambda = self._GetLambdaValues()
-        signal = self._GetSensorData(1)
-        self.yPlt, = self.ax.plot(xLambda, signal,'-')
-        self.animation = animation.FuncAnimation(self.fig, self.animate, interval=25, blit=True)
-        self.ax.set_ylim(0,65000)
-        signalList = []
-        signalList.append(xLambda.T.tolist())
-        signalList.append(signal.T.tolist())
-        df = pd.DataFrame(np.transpose(signalList),columns=['Lambda','Intensity'])
-        self.ax.grid()
-        plt.show()
-        csvPath =  os.path.join(os.path.dirname(__file__), os.path.join('..', 'Data', 'SignalData.csv')) 
-        df.to_csv(csvPath)
+        self.xLambda = self._GetLambdaValues()
 
-    def animate(self, i):
+    def _Animate(self, i):
         signal = self._GetSensorData(1)
         self.yPlt.set_ydata(signal)  # update the data
         return self.yPlt,
-
-#################################################
         
     def _ReadCalibrationCoefficients(self):
         clibdata = (ctypes.c_double*6)()
@@ -90,7 +73,45 @@ class C10082MD:
             time.sleep(0.1)
             self.specdll.USB_GetSensorData(self.deviceHandle, self.pipeHandle, self.usPixelSize, aryusBuffer)
             self.sensorData.append([aryusBuffer[i] for i in range(self.usPixelSize)])
-        return np.mean(self.sensorData, axis=0)
+        self.sensorData = np.mean(self.sensorData, axis=0)
+        return self.sensorData
+
+    def _PlotSensorDataLive(self):
+        signal = self._GetSensorData(1)
+        self.yPlt, = self.ax.plot(self.xLambda, signal,'-')
+        self.animation = animation.FuncAnimation(self.fig, self._Animate, interval=25, blit=True)
+        plt.title('Intensity Graph')
+        plt.xlabel('Lambda')
+        plt.ylabel('Intensity')
+        self.ax.set_ylim(0,65000)
+        signalList = []
+        signalList.append(self.xLambda.T.tolist())
+        signalList.append(signal.T.tolist())
+        df = pd.DataFrame(np.transpose(signalList),columns=['Lambda','Intensity'])
+        self.ax.grid()
+        plt.show()
+        csvPath =  os.path.join(os.path.dirname(__file__), os.path.join('..', 'Data', 'SignalDataLive.csv')) 
+        df.to_csv(csvPath)
+
+
+    def _PlotSensorData(self):
+        self.fig, self.ax = plt.subplots()
+        self.ax.plot(self.xLambda, self.sensorData,'-', label='Intensity signal')
+        self.ax.legend(loc='upper left', shadow=True, fontsize='large')
+        plt.title('Intensity Graph')
+        plt.xlabel('Lambda')
+        plt.ylabel('Intensity')
+        self.ax.grid()
+        plt.show() 
+        signalList = []
+        signalList.append(self.xLambda.T.tolist())
+        signalList.append(self.sensorData.T.tolist())
+        df = pd.DataFrame(np.transpose(signalList),columns=['Lambda','Intensity'])
+        csvPath = os.path.join(os.path.dirname(__file__), os.path.join('..', 'Data', 'SignalData.csv'))
+        df.to_csv(csvPath)
+        
+
+
     def _GetLambdaValues(self):
         x = np.array(range(self.usPixelSize))
         coeffs = self._ReadCalibrationCoefficients()

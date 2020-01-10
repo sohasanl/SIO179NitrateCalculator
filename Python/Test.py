@@ -1,16 +1,14 @@
 import C10082MD_v1 as sp
 import matplotlib.pyplot as plt
 def main():
-    miniSpect = sp.C10082MD()   
-    signal = miniSpect._GetSensorData()
+    miniSpect = sp.C10082MD() 
+    miniSpect._PlotSensorDataLive()
+
     xLambda = miniSpect._GetLambdaValues()
-    fig, a = plt.subplots()
-    a.plot(xLambda, signal,'-', label='Intensity signal')
-    a.legend(loc='upper left', shadow=True, fontsize='large')
-    plt.title('Intensity Graph')
-    plt.xlabel('Lambda')
-    plt.ylabel('Intensity')
-    plt.show() 
+    signal = miniSpect._GetSensorData(numOfAverage = 10)
+    miniSpect._PlotSensorData()
+
+
     del miniSpect
 
 if __name__ == '__main__':
